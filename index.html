@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>12-Month $1M Challenge Planner</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f8f9fa;
+      color: #333;
+    }
+  
+    header {
+      background: linear-gradient(135deg, #6e48aa 0%, #9d50bb 100%);
+      color: #fff;
+      padding: 1.5rem;
+      text-align: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+  
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      padding: 1.5rem;
+    }
+  
+    .card {
+      background: #fff;
+      border-radius: 10px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border-left: 5px solid #6e48aa;
+    }
+  
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+  
+    .hidden {
+      display: none;
+    }
+  
+    #month-view {
+      padding: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+  
+    .plan-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 2rem 0;
+      box-shadow: 0 2px 3px rgba(0,0,0,0.1);
+    }
+  
+    .plan-table th, .plan-table td {
+      border: 1px solid #ddd;
+      padding: 0.8rem;
+      text-align: center;
+    }
+  
+    .plan-table th {
+      background: linear-gradient(135deg, #6e48aa 0%, #9d50bb 100%);
+      color: white;
+      font-weight: 500;
+    }
+  
+    .plan-table tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+  
+    button {
+      margin: 1rem 0;
+      padding: 0.8rem 1.5rem;
+      border: none;
+      background: linear-gradient(135deg, #6e48aa 0%, #9d50bb 100%);
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.3s ease;
+    }
+  
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(110, 72, 170, 0.4);
+    }
+  
+    .project-card {
+      background: white;
+      border-radius: 8px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      margin-bottom: 1.5rem;
+    }
+  
+    .project-card h3 {
+      color: #6e48aa;
+      margin-top: 0;
+    }
+  
+    .project-card p {
+      line-height: 1.6;
+    }
+  
+    .project-card ul {
+      padding-left: 1.5rem;
+    }
+  
+    .project-card li {
+      margin-bottom: 0.5rem;
+    }
+  
+    .progress-bar {
+      height: 10px;
+      background: #e0e0e0;
+      border-radius: 5px;
+      margin: 1rem 0;
+      overflow: hidden;
+    }
+  
+    .progress {
+      height: 100%;
+      background: linear-gradient(90deg, #6e48aa, #9d50bb);
+      width: 0%;
+      transition: width 0.5s ease;
+    }
+  
+    .milestone {
+      background: #f0e6ff;
+      padding: 0.8rem;
+      border-radius: 5px;
+      margin: 0.5rem 0;
+      border-left: 3px solid #6e48aa;
+    }
+  
+    .income-badge {
+      display: inline-block;
+      background: #4caf50;
+      color: white;
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      margin-left: 0.5rem;
+    }
+  
+    /* Media Queries for Responsiveness */
+    @media (max-width: 1024px) {
+      .grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      }
+  
+      header {
+        padding: 1rem;
+      }
+  
+      .plan-table th, .plan-table td {
+        padding: 0.6rem;
+      }
+  
+      button {
+        padding: 0.6rem 1.2rem;
+      }
+  
+      .card {
+        padding: 1rem;
+      }
+    }
+  
+    @media (max-width: 768px) {
+      .grid {
+        grid-template-columns: 1fr;
+        padding: 1rem;
+      }
+  
+      header {
+        font-size: 18px;
+      }
+  
+      .plan-table th, .plan-table td {
+        padding: 0.5rem;
+      }
+  
+      button {
+        padding: 0.5rem 1rem;
+      }
+  
+      .card {
+        padding: 1rem;
+        box-shadow: none;
+      }
+  
+      .project-card {
+        padding: 1rem;
+      }
+    }
+  
+    @media (max-width: 480px) {
+      header {
+        font-size: 16px;
+        padding: 0.8rem;
+      }
+  
+      button {
+        font-size: 14px;
+        padding: 0.4rem 0.8rem;
+      }
+  
+      .plan-table th, .plan-table td {
+        padding: 0.4rem;
+      }
+  
+      .grid {
+        grid-template-columns: 1fr;
+      }
+  
+      .progress-bar {
+        height: 8px;
+      }
+  
+      .milestone {
+        font-size: 0.8rem;
+      }
+  
+      .income-badge {
+        font-size: 0.7rem;
+      }
+    }
+  </style>
+  
+</head>
+<body>
+  <header>
+    <h1>🚀 12-Month $1M Challenge Planner</h1>
+    <p>From Zero to Millionaire with Webflow & CSS</p>
+  </header>
+
+  <main>
+    <section id="month-cards" class="grid">
+      <!-- Month Cards -->
+      <script>
+        const monthTitles = [
+          "Freelancing Foundations",
+          "Portfolio Building",
+          "First Paying Clients",
+          "Digital Products Launch",
+          "Template Business",
+          "Marketing Mastery",
+          "SaaS Development",
+          "MVP Launch",
+          "User Acquisition",
+          "Revenue Scaling",
+          "Business Systems",
+          "Exit Preparation"
+        ];
+        
+        for(let i = 1; i <= 12; i++) {
+          document.write(`
+            <div class="card" onclick="loadMonth(${i})">
+              <h2>Month ${i}</h2>
+              <p>${monthTitles[i-1]}</p>
+              <div class="progress-bar">
+                <div class="progress" style="width: ${i*8}%"></div>
+              </div>
+            </div>
+          `);
+        }
+      </script>
+    </section>
+
+    <section id="month-view" class="hidden">
+      <button onclick="goBack()">⬅ Back to All Months</button>
+      <h2 id="month-title"></h2>
+      <p id="month-description"></p>
+
+      <!-- Timetable Table -->
+      <table class="plan-table">
+        <thead>
+          <tr>
+            <th>Week</th>
+            <th>Focus Area</th>
+            <th>Key Tasks</th>
+            <th>Income Target</th>
+            <th>Skills to Learn</th>
+          </tr>
+        </thead>
+        <tbody id="timetable-body">
+          <!-- Dynamically inserted rows -->
+        </tbody>
+      </table>
+
+      <!-- Project Details -->
+      <h3>📌 Monthly Projects</h3>
+      <div id="projects">
+        <!-- Project cards will load here -->
+      </div>
+
+      <!-- Milestones -->
+      <h3>🎯 Key Milestones</h3>
+      <div id="milestones">
+        <!-- Milestones will load here -->
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const monthPlans = {
+      1: {
+        title: "Month 1: Freelancing Foundations",
+        description: "Learn Webflow basics and CSS fundamentals to start taking small projects.",
+        table: [
+          ["Week 1", "Webflow Basics", "Complete Webflow University tutorials, Build 3 practice sites", "$0 (Learning Phase)", "Webflow CMS, Flexbox"],
+          ["Week 2", "CSS Fundamentals", "Master CSS Grid/Flexbox, Create 10 UI components", "$0 (Learning Phase)", "CSS Animations, Responsive Design"],
+          ["Week 3", "Portfolio Setup", "Create personal portfolio with 3 projects, Setup social media", "$0 (Setup Phase)", "GitHub Pages, Figma"],
+          ["Week 4", "First Projects", "Complete 2 free projects for portfolio, Start outreach", "$500 target", "Client Communication"]
+        ],
+        projects: [
+          {
+            title: "Business Landing Page",
+            description: "Create a responsive landing page for a local business using Webflow.",
+            tasks: [
+              "Design layout in Figma",
+              "Implement in Webflow",
+              "Add basic animations",
+              "Make mobile responsive"
+            ],
+            income: "$0 (Portfolio Piece)"
+          },
+          {
+            title: "Personal Portfolio",
+            description: "Build your own portfolio website showcasing your skills.",
+            tasks: [
+              "Choose color scheme",
+              "Create project case studies",
+              "Add contact form",
+              "Optimize for SEO"
+            ],
+            income: "Free"
+          }
+        ],
+        milestones: [
+          "Complete Webflow University courses",
+          "Build first 3 portfolio projects",
+          "Setup Twitter/LinkedIn profiles",
+          "Send first 10 cold emails"
+        ]
+      },
+      2: {
+        title: "Month 2: Portfolio Building",
+        description: "Expand your portfolio with real projects and land first paying clients.",
+        table: [
+          ["Week 1", "Client Outreach", "Contact 50 local businesses, Offer free 1-page site", "$250 target", "Cold Email Writing"],
+          ["Week 2", "Advanced CSS", "Learn CSS variables, transitions, and transforms", "$500 target", "CSS Custom Properties"],
+          ["Week 3", "Webflow CMS", "Build a blog template with dynamic content", "$750 target", "Webflow Collections"],
+          ["Week 4", "First Clients", "Deliver 3 paid projects, Collect testimonials", "$1,000 target", "Project Management"]
+        ],
+        projects: [
+          {
+            title: "Restaurant Website",
+            description: "Complete website for local restaurant with menu and reservation form.",
+            tasks: [
+              "Design food gallery",
+              "Add online ordering integration",
+              "Create Google Maps embed",
+              "Optimize for mobile"
+            ],
+            income: "$300-500"
+          },
+          {
+            title: "Blog Template",
+            description: "Create a reusable blog template for content creators.",
+            tasks: [
+              "Setup CMS collections",
+              "Design post layout",
+              "Add search functionality",
+              "Create dark mode"
+            ],
+            income: "$150 (Template Sale)"
+          }
+        ],
+        milestones: [
+          "Land first paying client",
+          "Earn first $500",
+          "Build 5 portfolio pieces",
+          "Get 3 testimonials"
+        ]
+      },
+      3: {
+        title: "Month 3: First Paying Clients",
+        description: "Systemize your freelancing business and increase rates.",
+        table: [
+          ["Week 1", "Process Setup", "Create project templates, Standardize pricing", "$1,500 target", "Business Systems"],
+          ["Week 2", "Marketing", "Post daily on Twitter, Create case studies", "$2,000 target", "Content Marketing"],
+          ["Week 3", "Upselling", "Offer add-ons like SEO and maintenance", "$2,500 target", "Sales Techniques"],
+          ["Week 4", "Automation", "Setup invoicing, contracts, and email templates", "$3,000 target", "Zapier/Automation"]
+        ],
+        projects: [
+          {
+            title: "E-commerce Site",
+            description: "Basic online store for local retailer with 10 products.",
+            tasks: [
+              "Product page design",
+              "Shopping cart setup",
+              "Payment gateway",
+              "Mobile optimization"
+            ],
+            income: "$800-1,200"
+          },
+          {
+            title: "Webflow Template Pack",
+            description: "Create 3 premium templates to sell on marketplaces.",
+            tasks: [
+              "Design landing page",
+              "Create blog template",
+              "Build portfolio template",
+              "Package for sale"
+            ],
+            income: "$29/template"
+          }
+        ],
+        milestones: [
+          "Earn $3,000 in month",
+          "Create standard operating procedures",
+          "Automate client onboarding",
+          "Double your rates"
+        ]
+      },
+      4: {
+        title: "Month 4: Digital Products Launch",
+        description: "Start generating passive income with digital products.",
+        table: [
+          ["Week 1", "Product Research", "Identify profitable template ideas, Validate demand", "$3,500 target", "Market Research"],
+          ["Week 2", "Template Design", "Create 3 premium Webflow templates", "$4,000 target", "UI/UX Design"],
+          ["Week 3", "Sales Channels", "Setup Gumroad account, List products", "$4,500 target", "E-commerce"],
+          ["Week 4", "Marketing", "Run Twitter ads, Partner with influencers", "$5,000 target", "Digital Marketing"]
+        ],
+        projects: [
+          {
+            title: "SaaS Landing Page Template",
+            description: "High-converting template for tech startups.",
+            tasks: [
+              "Design pricing section",
+              "Add feature comparisons",
+              "Create testimonial slider",
+              "Build in Webflow"
+            ],
+            income: "$49/license"
+          },
+          {
+            title: "CSS UI Kit",
+            description: "Collection of 50+ styled components for developers.",
+            tasks: [
+              "Design buttons, cards",
+              "Create form elements",
+              "Document usage",
+              "Package for sale"
+            ],
+            income: "$19/product"
+          }
+        ],
+        milestones: [
+          "Launch first digital product",
+          "Earn $1,000 in passive income",
+          "Get 100 template downloads",
+          "Build email list of 500+"
+        ]
+      },
+      5: {
+        title: "Month 5: Template Business",
+        description: "Scale your template business and automate sales.",
+        table: [
+          ["Week 1", "Product Expansion", "Add 5 new templates to your store", "$6,000 target", "Product Development"],
+          ["Week 2", "Affiliate Program", "Setup referral system, Recruit affiliates", "$7,000 target", "Partner Marketing"],
+          ["Week 3", "Upsell Strategy", "Create premium versions of templates", "$8,000 target", "Value Ladder"],
+          ["Week 4", "Automation", "Implement email sequences, Abandoned cart", "$10,000 target", "Sales Funnels"]
+        ],
+        projects: [
+          {
+            title: "Template Club Membership",
+            description: "Monthly subscription for new templates.",
+            tasks: [
+              "Design membership portal",
+              "Create content calendar",
+              "Setup payment system",
+              "Write welcome emails"
+            ],
+            income: "$29/month"
+          },
+          {
+            title: "Video Course",
+            description: "Webflow for Beginners tutorial series.",
+            tasks: [
+              "Outline curriculum",
+              "Record 10 lessons",
+              "Edit videos",
+              "Setup sales page"
+            ],
+            income: "$99/course"
+          }
+        ],
+        milestones: [
+          "Reach $10k/month revenue",
+          "Get 50 affiliate partners",
+          "Automate 80% of sales",
+          "Systemize content creation"
+        ]
+      },
+      6: {
+        title: "Month 6: Marketing Mastery",
+        description: "Master paid advertising and scale your audience.",
+        table: [
+          ["Week 1", "Facebook Ads", "Run first ad campaign, Optimize for conversions", "$12,000 target", "Paid Advertising"],
+          ["Week 2", "Content Strategy", "Launch YouTube channel, Post weekly", "$14,000 target", "Video Production"],
+          ["Week 3", "SEO Optimization", "Optimize all products for search traffic", "$16,000 target", "Search Engine Marketing"],
+          ["Week 4", "Partnerships", "Collaborate with influencers, Guest posts", "$20,000 target", "Relationship Building"]
+        ],
+        projects: [
+          {
+            title: "Lead Magnet",
+            description: "Create free resource to build email list.",
+            tasks: [
+              "Design PDF guide",
+              "Setup landing page",
+              "Create email sequence",
+              "Promote on social"
+            ],
+            income: "List Growth"
+          },
+          {
+            title: "Case Study Series",
+            description: "Showcase client success stories.",
+            tasks: [
+              "Interview clients",
+              "Create before/after",
+              "Produce video case studies",
+              "Promote to prospects"
+            ],
+            income: "Credibility"
+          }
+        ],
+        milestones: [
+          "Get 10,000 monthly visitors",
+          "Build email list to 5,000",
+          "Achieve 20% conversion rate",
+          "Systemize client acquisition"
+        ]
+      },
+      7: {
+        title: "Month 7: SaaS Development",
+        description: "Begin building your first SaaS product.",
+        table: [
+          ["Week 1", "Idea Validation", "Survey audience, Identify pain points", "$22,000 target", "Market Research"],
+          ["Week 2", "MVP Planning", "Define core features, Create wireframes", "$24,000 target", "Product Design"],
+          ["Week 3", "Tech Stack", "Choose no-code tools, Setup database", "$26,000 target", "Bubble.io/Webflow"],
+          ["Week 4", "Development", "Build first prototype, Test internally", "$30,000 target", "API Integrations"]
+        ],
+        projects: [
+          {
+            title: "SaaS MVP",
+            description: "Minimum viable product of your software idea.",
+            tasks: [
+              "Design UI in Figma",
+              "Build core functionality",
+              "Setup user accounts",
+              "Create basic dashboard"
+            ],
+            income: "Future Revenue"
+          },
+          {
+            title: "Waitlist Page",
+            description: "Landing page to collect beta users.",
+            tasks: [
+              "Write compelling copy",
+              "Add email capture",
+              "Setup referral program",
+              "Drive traffic"
+            ],
+            income: "Beta Users"
+          }
+        ],
+        milestones: [
+          "Validate SaaS idea",
+          "Build MVP prototype",
+          "Collect 500 beta signups",
+          "Secure first pre-orders"
+        ]
+      },
+      8: {
+        title: "Month 8: MVP Launch",
+        description: "Launch your SaaS to early adopters.",
+        table: [
+          ["Week 1", "Beta Testing", "Onboard 100 users, Collect feedback", "$35,000 target", "User Testing"],
+          ["Week 2", "Iteration", "Implement top feature requests", "$40,000 target", "Product Management"],
+          ["Week 3", "Pricing Strategy", "Test different pricing models", "$45,000 target", "Value-Based Pricing"],
+          ["Week 4", "Official Launch", "Public launch with marketing campaign", "$50,000 target", "Launch Marketing"]
+        ],
+        projects: [
+          {
+            title: "SaaS Launch Campaign",
+            description: "Comprehensive marketing for your product.",
+            tasks: [
+              "Create launch plan",
+              "Write press releases",
+              "Coordinate influencers",
+              "Run limited-time offer"
+            ],
+            income: "$10k+ Launch"
+          },
+          {
+            title: "Documentation Portal",
+            description: "Help center for your SaaS users.",
+            tasks: [
+              "Write help articles",
+              "Record tutorial videos",
+              "Setup chatbot",
+              "Create knowledge base"
+            ],
+            income: "Reduced Support"
+          }
+        ],
+        milestones: [
+          "Launch SaaS publicly",
+          "Get first 100 paying users",
+          "Achieve $10k MRR",
+          "Setup customer support"
+        ]
+      },
+      9: {
+        title: "Month 9: User Acquisition",
+        description: "Scale your customer base through marketing.",
+        table: [
+          ["Week 1", "Referral Program", "Incentivize word-of-mouth growth", "$60,000 target", "Viral Marketing"],
+          ["Week 2", "Paid Ads", "Scale Facebook/Google ad campaigns", "$70,000 target", "Ad Optimization"],
+          ["Week 3", "Content Marketing", "Publish weekly blog posts, Guest articles", "$80,000 target", "SEO Writing"],
+          ["Week 4", "Partnerships", "Strategic integrations with other tools", "$100,000 target", "Business Development"]
+        ],
+        projects: [
+          {
+            title: "Affiliate Program",
+            description: "System to reward promoters.",
+            tasks: [
+              "Setup tracking",
+              "Recruit affiliates",
+              "Create marketing assets",
+              "Launch program"
+            ],
+            income: "$5k+/month"
+          },
+          {
+            title: "Webinar Series",
+            description: "Live training to demonstrate your SaaS.",
+            tasks: [
+              "Plan topics",
+              "Create slides",
+              "Promote events",
+              "Follow-up sequence"
+            ],
+            income: "High-Value Leads"
+          }
+        ],
+        milestones: [
+          "Reach 1,000 users",
+          "Achieve $50k MRR",
+          "Get featured in media",
+          "Systemize growth"
+        ]
+      },
+      10: {
+        title: "Month 10: Revenue Scaling",
+        description: "Optimize monetization and expand revenue streams.",
+        table: [
+          ["Week 1", "Upsell Strategy", "Create premium features and plans", "$120,000 target", "Value Ladder"],
+          ["Week 2", "Enterprise Sales", "Target larger customers with custom solutions", "$150,000 target", "B2B Sales"],
+          ["Week 3", "Agency Model", "Offer done-for-you services", "$180,000 target", "Service Packaging"],
+          ["Week 4", "Revenue Systems", "Automate billing, collections, reporting", "$200,000 target", "Financial Systems"]
+        ],
+        projects: [
+          {
+            title: "Enterprise Plan",
+            description: "Premium offering for large clients.",
+            tasks: [
+              "Define features",
+              "Set pricing",
+              "Create sales materials",
+              "Train team"
+            ],
+            income: "$1k+/month"
+          },
+          {
+            title: "White Label Solution",
+            description: "Version for agencies to resell.",
+            tasks: [
+              "Custom branding",
+              "Setup partner portal",
+              "Create reseller agreement",
+              "Recruit partners"
+            ],
+            income: "$500+/license"
+          }
+        ],
+        milestones: [
+          "Launch enterprise plan",
+          "Secure first 5-figure client",
+          "Systemize sales process",
+          "Build management team"
+        ]
+      },
+      11: {
+        title: "Month 11: Business Systems",
+        description: "Build systems that allow the business to run without you.",
+        table: [
+          ["Week 1", "Team Building", "Hire key roles, Document processes", "$250,000 target", "Leadership"],
+          ["Week 2", "Automation", "Systemize marketing, sales, support", "$300,000 target", "Business Process"],
+          ["Week 3", "Financials", "Setup accounting, forecasting, metrics", "$350,000 target", "Financial Modeling"],
+          ["Week 4", "Culture", "Define values, recognition programs", "$400,000 target", "Organizational Design"]
+        ],
+        projects: [
+          {
+            title: "Operations Manual",
+            description: "Document all business processes.",
+            tasks: [
+              "Map workflows",
+              "Create training docs",
+              "Record video tutorials",
+              "Implement knowledge base"
+            ],
+            income: "Scalability"
+          },
+          {
+            title: "Management Team",
+            description: "Hire and train department heads.",
+            tasks: [
+              "Define roles",
+              "Create job descriptions",
+              "Interview candidates",
+              "Onboard team"
+            ],
+            income: "Delegation"
+          }
+        ],
+        milestones: [
+          "Hire first managers",
+          "Document all processes",
+          "Reduce owner workload to 20h/wk",
+          "Prepare for scaling"
+        ]
+      },
+      12: {
+        title: "Month 12: Exit Preparation",
+        description: "Position your business for acquisition or passive income.",
+        table: [
+          ["Week 1", "Valuation", "Get professional business valuation", "$500,000 target", "Business Valuation"],
+          ["Week 2", "Financials", "Prepare audited financial statements", "$750,000 target", "Accounting"],
+          ["Week 3", "Marketing", "Create sales materials for buyers", "$1,000,000 target", "Investor Relations"],
+          ["Week 4", "Negotiation", "Enter acquisition discussions", "Exit Target", "Deal Making"]
+        ],
+        projects: [
+          {
+            title: "Information Memorandum",
+            description: "Professional document for potential buyers.",
+            tasks: [
+              "Compile financials",
+              "Document assets",
+              "Highlight growth",
+              "Create projections"
+            ],
+            income: "Exit Value"
+          },
+          {
+            title: "Transition Plan",
+            description: "Roadmap for business transfer.",
+            tasks: [
+              "Plan handover",
+              "Train successor",
+              "Setup escrow",
+              "Finalize terms"
+            ],
+            income: "Smooth Exit"
+          }
+        ],
+        milestones: [
+          "Complete business valuation",
+          "Prepare for due diligence",
+          "Enter acquisition talks",
+          "Achieve $1M+ exit valuation"
+        ]
+      }
+    };
+
+    function loadMonth(month) {
+      document.getElementById('month-cards').classList.add('hidden');
+      document.getElementById('month-view').classList.remove('hidden');
+      
+      const plan = monthPlans[month];
+      document.getElementById('month-title').textContent = plan.title;
+      document.getElementById('month-description').textContent = plan.description;
+
+      // Populate table
+      const tbody = document.getElementById('timetable-body');
+      tbody.innerHTML = '';
+      plan.table.forEach(row => {
+        const tr = document.createElement('tr');
+        row.forEach((cell, index) => {
+          const td = document.createElement('td');
+          td.innerHTML = index === 2 ? formatTasks(cell) : cell;
+          tr.appendChild(td);
+        });
+        tbody.appendChild(tr);
+      });
+
+      // Populate projects
+      const projectsDiv = document.getElementById('projects');
+      projectsDiv.innerHTML = '';
+      plan.projects.forEach(project => {
+        const projectHTML = `
+          <div class="project-card">
+            <h3>${project.title} ${project.income ? `<span class="income-badge">${project.income}</span>` : ''}</h3>
+            <p>${project.description}</p>
+            <ul>
+              ${project.tasks.map(task => `<li>${task}</li>`).join('')}
+            </ul>
+          </div>
+        `;
+        projectsDiv.insertAdjacentHTML('beforeend', projectHTML);
+      });
+
+      // Populate milestones
+      const milestonesDiv = document.getElementById('milestones');
+      milestonesDiv.innerHTML = '';
+      plan.milestones.forEach(milestone => {
+        milestonesDiv.insertAdjacentHTML('beforeend', `
+          <div class="milestone">✓ ${milestone}</div>
+        `);
+      });
+    }
+
+    function formatTasks(tasks) {
+      return tasks.split(',').map(task => `• ${task.trim()}`).join('<br>');
+    }
+
+    function goBack() {
+      document.getElementById('month-view').classList.add('hidden');
+      document.getElementById('month-cards').classList.remove('hidden');
+    }
+  </script>
+</body>
+</html>
